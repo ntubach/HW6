@@ -32,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -110,6 +111,7 @@ fun Calculator(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(8.dp)
+                .testTag("calculator")
         )
         CalculatorRow {
             CalculatorButton(stringId = R.string.clear_entry, onClick = onClearEntry)
@@ -152,7 +154,8 @@ fun ColumnScope.CalculatorRow(
     horizontalArrangement = Arrangement.Center,
     modifier = Modifier
         .fillMaxWidth()
-        .weight(1f),
+        .weight(1f)
+        .testTag("calculatorRow"),
     content = content
 )
 
@@ -174,6 +177,7 @@ fun RowScope.CalculatorButton(
         .background(color = Color(100, 181, 246))
         .weight(1f)
         .fillMaxHeight()
+        .testTag("calculatorButton")
 ) {
     Text(
         text = text,
@@ -182,6 +186,7 @@ fun RowScope.CalculatorButton(
         modifier = Modifier
             .padding(4.dp)
             .align(Alignment.Center)
+            .testTag("calculatorButtonText")
     )
 }
 

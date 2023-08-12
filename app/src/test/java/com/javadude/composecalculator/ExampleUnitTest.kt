@@ -3,7 +3,7 @@ package com.javadude.composecalculator
 import junit.framework.TestCase.assertEquals
 import org.junit.Test
 
-class CalculatorLogicUnitTests {
+class ExampleUnitTest {
     private var display = ""
     private val logic = CalculatorLogic { display = it }
     // add your unit tests here
@@ -12,8 +12,13 @@ class CalculatorLogicUnitTests {
     fun negate() {
         logic.addDigit(1)
         logic.negate()
-        assertEquals("-1.0", display)
+        assertEquals("-1", display)
         logic.negate()
+        assertEquals("1", display)
+        logic.plus()
+        logic.addDigit(2)
+        logic.negate()
+        logic.equals()
         assertEquals("-1.0", display)
     }
 
@@ -103,24 +108,57 @@ class CalculatorLogicUnitTests {
 
     @Test
     fun removeDigit() {
+        logic.addDigit(1)
+        logic.removeDigit()
+        assertEquals("0.0", display)
+        logic.clear()
+        for (it in 9 downTo 0) {
+            logic.addDigit(it)
+        }
+        logic.removeDigit()
+        logic.removeDigit()
+        assertEquals("98765432", display)
     }
 
     @Test
     fun clearEntry() {
+        logic.addDigit(1234)
+        logic.clearEntry()
+        assertEquals("0.0", display)
+        logic.clearEntry()
+        logic.addDigit(1)
+        logic.plus()
+        logic.addDigit(1)
+        logic.clearEntry()
+        assertEquals("0.0", display)
+        logic.addDigit(2)
+        logic.equals()
+        assertEquals("3.0", display)
     }
 
     @Test
     fun clear() {
+        logic.addDigit(1234)
+        logic.clear()
+        assertEquals("0.0", display)
+        logic.clearEntry()
+        logic.addDigit(1)
+        logic.plus()
+        logic.addDigit(1)
+        logic.clear()
+        assertEquals("0.0", display)
+        logic.addDigit(2)
+        logic.decimal()
+        logic.addDigit(2)
+        logic.equals()
+        assertEquals("2.2", display)
     }
-
+    /*
+    Use Turbine to collect the displayed value and check it after each operation
+    Perform operations on the view model. Be sure to call all operations at least once
+     */
     @Test
-    fun getOnDisplayChanged() {
+    fun test_view_model() {
+        val viewModel = CalculatorViewModel()
     }
-
-    @Test
-    fun check_buttons() {
-
-    }
-
-
 }

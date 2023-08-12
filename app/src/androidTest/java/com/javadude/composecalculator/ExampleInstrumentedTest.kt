@@ -1,13 +1,11 @@
 package com.javadude.composecalculator
 
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onChildAt
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -22,10 +20,6 @@ class ExampleInstrumentedTest {
     val composeTestRule = createComposeRule()
 
     // add your instrumented tests here
-    /*
-    Walk through three sequences of operations - perform more than one + - * / in each sequence
-    Be sure to demonstrate the error (check all of the buttons when running to see where the error appears - there is one intentional error in the UI)
-     */
     @Test
     fun test_compose_ui_numbers() {
         val viewModel = CalculatorViewModel()
@@ -39,7 +33,7 @@ class ExampleInstrumentedTest {
         }
 
         // Test for each number button being clicked
-        var display: String = ""
+        var display = ""
         for (i in 0..9) {
              display += i.toString()
             composeTestRule
@@ -52,7 +46,7 @@ class ExampleInstrumentedTest {
     }
 
     @Test
-    fun test_compose_ui_calculations() {
+    fun test_compose_ui_calculation_1() {
         val viewModel = CalculatorViewModel()
 
         composeTestRule.setContent {
@@ -63,12 +57,45 @@ class ExampleInstrumentedTest {
                 modifier = Modifier)
         }
 
-        composeTestRule.onNodeWithText("5").assertTextEquals("5").performClick()
-        composeTestRule.onNodeWithText("+").assertTextEquals("+").performClick()
-        composeTestRule.onNodeWithText("3").assertTextEquals("3").performClick()
-        composeTestRule.onNodeWithText("*").assertTextEquals("*").performClick()
-        composeTestRule.onNodeWithText("2").assertTextEquals("2").performClick()
-        composeTestRule.onNodeWithText("=").assertTextEquals("=").performClick()
-        composeTestRule.onNodeWithTag("calculator").assertTextEquals("8.0")
+        val test1 = "5+3*3=" // Should equal '24'
+        val result1 = "24.0"
+        test1.forEach {composeTestRule.onNodeWithText(it.toString()).assertTextEquals(it.toString()).performClick()}
+        composeTestRule.onNodeWithTag("calculator").assertTextEquals(result1)
+    }
+
+    @Test
+    fun test_compose_ui_calculation_2() {
+        val viewModel = CalculatorViewModel()
+
+        composeTestRule.setContent {
+            val display by viewModel.display.collectAsState(initial = "")
+            Calculator(
+                display = display,
+                viewModel = viewModel,
+                modifier = Modifier)
+        }
+
+        val test2 = "3406/13-161=" // Should equal '101'
+        val result2 = "101.0"
+        test2.forEach {composeTestRule.onNodeWithText(it.toString()).assertTextEquals(it.toString()).performClick()}
+        composeTestRule.onNodeWithTag("calculator").assertTextEquals(result2)
+    }
+
+    @Test
+    fun test_compose_ui_calculation_3() {
+        val viewModel = CalculatorViewModel()
+
+        composeTestRule.setContent {
+            val display by viewModel.display.collectAsState(initial = "")
+            Calculator(
+                display = display,
+                viewModel = viewModel,
+                modifier = Modifier)
+        }
+
+        val test3 = "5+5+5+5+5*5-5/5=" // Should equal '24'
+        val result3 = "24.0"
+        test3.forEach {composeTestRule.onNodeWithText(it.toString()).assertTextEquals(it.toString()).performClick()}
+        composeTestRule.onNodeWithTag("calculator").assertTextEquals(result3)
     }
 }

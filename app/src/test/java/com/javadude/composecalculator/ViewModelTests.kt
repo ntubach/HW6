@@ -24,138 +24,228 @@ class ViewModelTests {
     }
 
     @Test
-    fun negate() {
-        logic.addDigit(1)
-        logic.negate()
-        assertEquals("-1", display)
-        logic.negate()
-        assertEquals("1", display)
-        logic.plus()
-        logic.addDigit(2)
-        logic.negate()
-        logic.equals()
-        assertEquals("-1.0", display)
-    }
-
-    @Test
-    fun testEquals() {
-        // Display starts empty, equals sets to 0.0
-        assertEquals("", display)
-        logic.equals()
-        assertEquals("0.0", display)
-        // Adding digits 101 then equals displays 101.0
-        logic.addDigit(1)
-        logic.addDigit(0)
-        logic.addDigit(1)
-        logic.equals()
-        assertEquals("101.0", display)
-        // Adding digits 101 . 10 then equals displays 101.1
-        logic.addDigit(1)
-        logic.addDigit(0)
-        logic.addDigit(1)
-        logic.decimal()
-        logic.addDigit(1)
-        logic.addDigit(0)
-        logic.equals()
-        assertEquals("101.1", display)
-    }
-    @Test
-    fun minus() {
-        logic.addDigit(3)
-        logic.minus()
-        logic.addDigit(2)
-        logic.equals()
-        assertEquals("1.0", display)
-    }
-
-    @Test
-    fun times() {
-        logic.addDigit(3)
-        logic.times()
-        logic.addDigit(2)
-        logic.equals()
-        assertEquals("6.0", display)
-    }
-
-    @Test
-    fun divide() {
-        logic.addDigit(6)
-        logic.divide()
-        logic.addDigit(3)
-        logic.equals()
-        assertEquals("2.0", display)
-    }
-
-    @Test
-    fun decimal() {
-        assertEquals("", display)
-        logic.decimal()
-        assertEquals("", display)
-        logic.addDigit(0)
-        assertEquals("0", display)
-        logic.decimal()
-        assertEquals("0.", display)
-        for (it in 0 .. 9) {
-            logic.addDigit(it)
+    fun test_view_model_negate() {
+        runBlocking {
+            viewModel.addDigit(1)
+            viewModel.negate()
+            viewModel.display.test {
+                assertEquals("-1", awaitItem())
+                cancelAndIgnoreRemainingEvents()
+            }
+            viewModel.negate()
+            viewModel.display.test {
+                assertEquals("1", awaitItem())
+                cancelAndIgnoreRemainingEvents()
+            }
+            viewModel.plus()
+            viewModel.addDigit(2)
+            viewModel.negate()
+            viewModel.equals()
+            viewModel.display.test {
+                assertEquals("-1.0", awaitItem())
+                cancelAndIgnoreRemainingEvents()
+            }
         }
-        assertEquals("0.0123456789", display)
-        logic.equals()
-        assertEquals("0.0123456789", display)
     }
 
     @Test
-    fun addDigit() {
-        for (it in 9 downTo 0) {
-            logic.addDigit(it)
+    fun test_view_model_testEquals() {
+        runBlocking {
+            // Display starts empty, equals sets to 0.0
+            viewModel.equals()
+            viewModel.display.test {
+                assertEquals("0.0", awaitItem())
+                cancelAndIgnoreRemainingEvents()
+            }
+            // Adding digits 101 then equals displays 101.0
+            viewModel.addDigit(1)
+            viewModel.addDigit(0)
+            viewModel.addDigit(1)
+            viewModel.equals()
+            viewModel.display.test {
+                assertEquals("101.0", awaitItem())
+                cancelAndIgnoreRemainingEvents()
+            }
+            // Adding digits 101 . 10 then equals displays 101.1
+            viewModel.addDigit(1)
+            viewModel.addDigit(0)
+            viewModel.addDigit(1)
+            viewModel.decimal()
+            viewModel.addDigit(1)
+            viewModel.addDigit(0)
+            viewModel.equals()
+            viewModel.display.test {
+                assertEquals("101.1", awaitItem())
+                cancelAndIgnoreRemainingEvents()
+            }
         }
-        assertEquals("9876543210", display)
     }
 
     @Test
-    fun removeDigit() {
-        logic.addDigit(1)
-        logic.removeDigit()
-        assertEquals("0.0", display)
-        logic.clear()
-        for (it in 9 downTo 0) {
-            logic.addDigit(it)
+    fun test_view_model_minus() {
+        runBlocking {
+            viewModel.addDigit(3)
+            viewModel.minus()
+            viewModel.addDigit(2)
+            viewModel.equals()
+            viewModel.display.test {
+                // This test will fail due to minus being mapped to plus
+                assertEquals("1.0", awaitItem())
+                cancelAndIgnoreRemainingEvents()
+            }
         }
-        logic.removeDigit()
-        logic.removeDigit()
-        assertEquals("98765432", display)
     }
 
     @Test
-    fun clearEntry() {
-        logic.addDigit(1234)
-        logic.clearEntry()
-        assertEquals("0.0", display)
-        logic.clearEntry()
-        logic.addDigit(1)
-        logic.plus()
-        logic.addDigit(1)
-        logic.clearEntry()
-        assertEquals("0.0", display)
-        logic.addDigit(2)
-        logic.equals()
-        assertEquals("3.0", display)
+    fun test_view_model_times() {
+        runBlocking {
+            viewModel.addDigit(3)
+            viewModel.times()
+            viewModel.addDigit(2)
+            viewModel.equals()
+            viewModel.display.test {
+                assertEquals("6.0", awaitItem())
+                cancelAndIgnoreRemainingEvents()
+            }
+        }
     }
 
     @Test
-    fun clear() {
-        logic.addDigit(1234)
-        logic.clear()
-        assertEquals("0.0", display)
-        logic.clearEntry()
-        logic.addDigit(1)
-        logic.plus()
-        logic.addDigit(1)
-        logic.clear()
-        assertEquals("0.0", display)
-        logic.addDigit(2)
-        logic.decimal()
-        logic.addDigit(2)
-        logic.equals()
-        assertEquals("2.2", display)
+    fun test_view_model_divide() {
+        runBlocking {
+            viewModel.addDigit(6)
+            viewModel.divide()
+            viewModel.addDigit(3)
+            viewModel.equals()
+            viewModel.display.test {
+                assertEquals("2.0", awaitItem())
+                cancelAndIgnoreRemainingEvents()
+            }
+        }
+    }
+
+    @Test
+    fun test_view_model_decimal() {
+        runBlocking {
+            viewModel.decimal()
+            viewModel.display.test {
+                assertEquals("", awaitItem())
+                cancelAndIgnoreRemainingEvents()
+            }
+            viewModel.addDigit(0)
+            viewModel.display.test {
+                assertEquals("0", awaitItem())
+                cancelAndIgnoreRemainingEvents()
+            }
+            viewModel.decimal()
+            viewModel.display.test {
+                assertEquals("0.", awaitItem())
+                cancelAndIgnoreRemainingEvents()
+            }
+            for (it in 0..9) {
+                viewModel.addDigit(it)
+            }
+            viewModel.display.test {
+                assertEquals("0.0123456789", awaitItem())
+                cancelAndIgnoreRemainingEvents()
+            }
+            viewModel.equals()
+            viewModel.display.test {
+                assertEquals("0.0123456789", awaitItem())
+                cancelAndIgnoreRemainingEvents()
+            }
+        }
+    }
+
+    @Test
+    fun test_view_model_addDigit() {
+        runBlocking {
+            for (it in 9 downTo 0) {
+                viewModel.addDigit(it)
+            }
+            viewModel.display.test {
+                assertEquals("9876543210", awaitItem())
+                cancelAndIgnoreRemainingEvents()
+            }
+        }
+    }
+
+    @Test
+    fun test_view_model_removeDigit() {
+        runBlocking {
+            viewModel.addDigit(1)
+            viewModel.removeDigit()
+            viewModel.display.test {
+                assertEquals("0.0", awaitItem())
+                cancelAndIgnoreRemainingEvents()
+            }
+            viewModel.clear()
+            for (it in 9 downTo 0) {
+                viewModel.addDigit(it)
+            }
+            viewModel.removeDigit()
+            viewModel.removeDigit()
+            viewModel.display.test {
+                // This test will fail due to removeDigit removing two digits, not one
+                assertEquals("98765432", awaitItem())
+                cancelAndIgnoreRemainingEvents()
+            }
+        }
+    }
+
+    @Test
+    fun test_view_model_clearEntry() {
+        runBlocking {
+            viewModel.addDigit(1234)
+            viewModel.clearEntry()
+            viewModel.display.test {
+                assertEquals("0.0", awaitItem())
+                cancelAndIgnoreRemainingEvents()
+            }
+            viewModel.clearEntry()
+            viewModel.addDigit(1)
+            viewModel.plus()
+            viewModel.addDigit(1)
+            viewModel.clearEntry()
+            viewModel.display.test {
+                assertEquals("0.0", awaitItem())
+                cancelAndIgnoreRemainingEvents()
+            }
+            viewModel.addDigit(2)
+            viewModel.equals()
+            viewModel.display.test {
+                assertEquals("3.0", awaitItem())
+                cancelAndIgnoreRemainingEvents()
+            }
+        }
+    }
+
+    @Test
+    fun test_view_model_clear() {
+        runBlocking {
+            viewModel.addDigit(1234)
+            viewModel.clear()
+            viewModel.display.test {
+                assertEquals("0.0", awaitItem())
+                cancelAndIgnoreRemainingEvents()
+            }
+            viewModel.clearEntry()
+            viewModel.addDigit(1)
+            viewModel.plus()
+            viewModel.addDigit(1)
+            viewModel.clear()
+            viewModel.display.test {
+                assertEquals("0.0", awaitItem())
+                cancelAndIgnoreRemainingEvents()
+            }
+            viewModel.addDigit(2)
+            viewModel.decimal()
+            viewModel.addDigit(2)
+            viewModel.equals()
+            viewModel.display.test {
+                assertEquals("2.2", awaitItem())
+                cancelAndIgnoreRemainingEvents()
+            }
+        }
     }
 }

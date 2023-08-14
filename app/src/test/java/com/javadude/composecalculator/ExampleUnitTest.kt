@@ -153,12 +153,4 @@ class ExampleUnitTest {
         logic.equals()
         assertEquals("2.2", display)
     }
-    /*
-    Use Turbine to collect the displayed value and check it after each operation
-    Perform operations on the view model. Be sure to call all operations at least once
-     */
-    @Test
-    fun test_view_model() {
-        val viewModel = CalculatorViewModel()
-    }
 }
